@@ -3,7 +3,7 @@ name: Build Android APK
 on:
   workflow_dispatch:
   push:
-    branches: ["main"]
+    branches: [ main ]
 
 jobs:
   build:
@@ -13,21 +13,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Java
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: "17"
-          distribution: "temurin"
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
 
       - name: Build APK
-        uses: gradle/gradle-build-action@v3
-        with:
-          gradle-version: "8.7"
-          build-root-directory: AutoTradeSignal
-          arguments: assembleDebug
+        run: gradle :app:assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: AutoTradeSignal-APK
-          path: AutoTradeSignal/app/build/outputs/apk/debug/*.apk
+          name: AutoTradeSignal-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
